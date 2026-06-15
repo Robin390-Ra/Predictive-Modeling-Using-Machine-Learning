@@ -1,0 +1,9 @@
+DATA :
+
+Age,MonthlyCharges,Tenure,InternetService,Contract,Churn
+25,70,1,Fiber,Month-to-month,Yes
+45,55,5,DSL,One year,No
+35,90,2,Fiber,Month-to-month,Yes
+50,45,10,DSL,Two year,No
+29,80,3,Fiber,Month-to-month,Yes
+60,40,15,DSL,Two year,No
