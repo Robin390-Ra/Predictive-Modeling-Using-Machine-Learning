@@ -1,0 +1,198 @@
+Customer_Churn_Prediction.ipynb
+
+# Import Libraries
+
+import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.metrics import roc_curve,auc
+
+
+
+# Load Dataset
+
+df = pd.read_csv("../Dataset/customer_churn.csv")
+
+df.head()
+
+
+# Data Preprocessing :
+
+encoder = LabelEncoder()
+
+
+for col in df.columns:
+    df[col] = encoder.fit_transform(df[col])
+
+
+df.head()
+
+
+
+#Split Data
+
+X = df.drop("Churn",axis=1)
+
+y = df["Churn"]
+
+
+X_train,X_test,y_train,y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+
+#Train Models
+Logistic Regression
+
+lr = LogisticRegression()
+
+lr.fit(X_train,y_train)
+
+lr_prediction = lr.predict(X_test)
+
+
+print(
+accuracy_score(
+y_test,
+lr_prediction
+))
+
+#Decision Tree
+dt = DecisionTreeClassifier()
+
+
+dt.fit(
+X_train,
+y_train
+)
+
+
+dt_prediction = dt.predict(X_test)
+
+
+print(
+accuracy_score(
+y_test,
+dt_prediction
+))
+
+
+#Random Forest
+rf = RandomForestClassifier(
+n_estimators=100
+)
+
+
+rf.fit(
+X_train,
+y_train
+)
+
+
+rf_prediction = rf.predict(X_test)
+
+
+accuracy = accuracy_score(
+y_test,
+rf_prediction
+)
+
+
+print("Accuracy:",accuracy)
+
+
+
+
+#Confusion Matrix
+
+cm = confusion_matrix(
+y_test,
+rf_prediction
+)
+
+
+sns.heatmap(
+cm,
+annot=True
+)
+
+
+plt.title(
+"Confusion Matrix"
+)
+
+
+plt.savefig(
+"../Output/confusion_matrix.png"
+)
+
+
+plt.show()
+
+#ROC Curve
+
+probability = rf.predict_proba(X_test)[:,1]
+
+
+fpr,tpr,threshold = roc_curve(
+y_test,
+probability
+)
+
+
+roc_auc = auc(
+fpr,
+tpr
+)
+
+
+
+plt.plot(
+fpr,
+tpr
+)
+
+
+plt.title(
+"ROC Curve"
+)
+
+
+plt.xlabel(
+"False Positive Rate"
+)
+
+
+plt.ylabel(
+"True Positive Rate"
+)
+
+
+
+plt.savefig(
+"../Output/roc_curve.png"
+)
+
+
+plt.show()
+
+
+
